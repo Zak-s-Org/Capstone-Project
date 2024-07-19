@@ -6,10 +6,13 @@ import { Paper, Button, Card, CardContent } from "@mui/material";
 import items from "./component/CarouselSlide";
 import Cards from "./component/carouselCard";
 import Products from "./component/items";
-import Login from "./component/login"
+import Login from "./component/login";
+import DarkThemedLogin from "./component/LoginPage";
+
 
 function App() {
-  const [count, setCount] = useState(0);
+  
+
 
   const containerStyle = {
     width: "100vw", // Full viewport width
@@ -31,20 +34,22 @@ function App() {
     );
   }
 
-const background = {
-  backgroundColor : "#a1a1aa"
-}
+  const background = {
+    backgroundColor: "#a1a1aa"
+  };
 
   return (
-    <div style={background}>
+    <div className="wrapped">
+    <div className="navbar">
       <ResponsiveAppBar />
-      <div style={containerStyle} >
+      
+      </div>
+      <div style={containerStyle}>
         <Carousel>{items.map(createCard)}</Carousel>
       </div>
       <br></br>
       <Products />
-    
-    <Login />
+       {/* Add the new DarkThemedLogin component */}
     </div>
   );
 }

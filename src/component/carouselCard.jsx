@@ -8,12 +8,12 @@ const background = {
 
  const Cards = ({ name , img , price ,description}) =>{
     return (
-        <div style={background}>
+        <div>
             <Paper>
             <h2>{name}</h2>
             <p>{description}</p>
             <p>{price}</p>
-            <img src={img}  style={{ width: '50%', height: 'auto' , maxHeight:"400px" , backgroundColor : "#a1a1aa"}} />
+            <img src={img}  style={{ width: '50%', height: 'auto' , maxHeight:"400px" }} />
             </Paper>
         </div>
     )

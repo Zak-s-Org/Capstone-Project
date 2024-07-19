@@ -6,7 +6,6 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
-import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -15,6 +14,13 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import bz from "./bz.webp"; 
+import { BrowserRouter , Link , Route , Routes } from 'react-router-dom';
+import Login from "./LoginPage.jsx"
+import Cart from "./cart.jsx"
+import Home from "./home.jsx"
+
+const pages = ['Home', 'Login', 'Cart'];
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -43,10 +49,9 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
+  color: 'inherit', // Inherit color from parent
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
@@ -97,8 +102,8 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Login</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Create account</MenuItem>
     </Menu>
   );
 
@@ -125,7 +130,7 @@ export default function PrimarySearchAppBar() {
           aria-label="account of current user"
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
-          color="inherit"
+          color="inherit" // Inherit color from parent
         >
           <AccountCircle />
         </IconButton>
@@ -135,25 +140,27 @@ export default function PrimarySearchAppBar() {
   );
 
   return (
+  
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" sx={{ top: 0, zIndex: 1 }}>
+      <AppBar position="fixed" sx={{ top: 0, zIndex: 1, backgroundColor: '#a3b6bd' }}> {/* Updated color */}
         <Toolbar>
           <IconButton
             size="large"
             edge="start"
-            color="inherit"
+            color="inherit" // Inherit color from parent
             aria-label="open drawer"
-            sx={{mr: 2 }}
+            sx={{ mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
+          <img src={bz} alt="BZ Logo" style={{ width: '50px', height: '50px', marginRight: '10px' }} />
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'none', sm: 'block' }, color: '#000' }} // Ensure text is readable
           >
-            MUI
+            My App
           </Typography>
           <Search>
             <SearchIconWrapper>
@@ -161,11 +168,18 @@ export default function PrimarySearchAppBar() {
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
-              inputProps={{ 'aria-label': 'earch' }}
+              inputProps={{ 'aria-label': 'search' }}
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <MenuItem key={page} onClick={handleMenuClose}>
+               <Link to={`/${page.toLowerCase()}`}>
+                    <Typography textAlign="center">{page}</Typography>
+                  </Link>
+              </MenuItem>
+            ))}
             <IconButton
               size="large"
               edge="end"
@@ -173,7 +187,7 @@ export default function PrimarySearchAppBar() {
               aria-controls={menuId}
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
-              color="inherit"
+              color="inherit" // Inherit color from parent
             >
               <AccountCircle />
             </IconButton>
@@ -185,7 +199,7 @@ export default function PrimarySearchAppBar() {
               aria-controls={mobileMenuId}
               aria-haspopup="true"
               onClick={handleMobileMenuOpen}
-              color="inherit"
+              color="inherit" // Inherit color from parent
             >
               <MoreIcon />
             </IconButton>
@@ -194,6 +208,12 @@ export default function PrimarySearchAppBar() {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
+      <Routes>
+      <Route path="/home" element={<h1><Home /></h1>} />
+          <Route path="/login" element={<h1><Login /></h1>} />
+          <Route path="/Cart" element={<h1><Cart /></h1>}/>
+        </Routes >
     </Box>
+  
   );
 }

@@ -3,7 +3,7 @@ import Carousel from 'react-material-ui-carousel';
 import { Paper, Button } from '@mui/material';
 import  cheese from "./CHEESE2.jpg"
 import camera from "./bigCameraLens.jpg"
-
+import crocs from "./crocs.jpg"
 
 
 
@@ -25,8 +25,10 @@ import camera from "./bigCameraLens.jpg"
         } ,
         {
             id :3,
-            name: "Random Name #3",
-            description: "Hello World!"
+            name: "Croc boots",
+            description: "when you wanna wrangle up the horses in comfort",
+            price :  "$1200",
+            img : crocs
         }
     ];
 
