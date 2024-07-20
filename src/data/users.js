@@ -1,7 +1,7 @@
 const user = [
 
-    {username:"Cap_Price", password:"123456", type:"buyer"},
-    {username:"Soap_McTive", password:"78910",type:"seller"}
+    {username:"Cap_Price", password:"123456", admin: true},
+    {username:"Soap_McTive", password:"78910",admin: false},
     
     ];
     

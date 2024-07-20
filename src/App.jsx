@@ -7,7 +7,7 @@ import items from "./component/CarouselSlide";
 import Cards from "./component/carouselCard";
 import Products from "./component/items";
 import Login from "./component/login";
-import DarkThemedLogin from "./component/LoginPage";
+import DarkThemedLogin from "./pages/LoginPage";
 
 
 function App() {

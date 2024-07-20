@@ -1,9 +1,9 @@
 import React from 'react';
 import Carousel from 'react-material-ui-carousel';
 import { Paper, Button } from '@mui/material';
-import  cheese from "./CHEESE2.jpg"
-import camera from "./bigCameraLens.jpg"
-import crocs from "./crocs.jpg"
+import  cheese from "../assets/CHEESE2.jpg"
+import camera from "../assets/bigCameraLens.jpg"
+import crocs from "../assets/crocs.jpg"
 
 
 

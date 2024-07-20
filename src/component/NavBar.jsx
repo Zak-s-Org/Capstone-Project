@@ -14,11 +14,11 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import bz from "./bz.webp"; 
+import bz from "../assets/bz.webp"; 
 import { BrowserRouter , Link , Route , Routes } from 'react-router-dom';
-import Login from "./LoginPage.jsx"
+import Login from "../pages/LoginPage.jsx"
 import Cart from "./cart.jsx"
-import Home from "./home.jsx"
+import Home from "../pages/HomePage.jsx"
 
 const pages = ['Home', 'Login', 'Cart'];
 

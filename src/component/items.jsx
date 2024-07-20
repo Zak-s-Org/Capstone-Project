@@ -1,8 +1,8 @@
 import { Paper, Grid, Typography, Button, Card, CardContent } from '@mui/material';
-import bob from "./bob.jpg"
-import roblox from "./shopping.webp"
-import shirt from "./shirt.jpg"
-import shirt2 from "./shirt2.jpg"
+import bob from "../assets/bob.jpg"
+import roblox from "../assets/shopping.webp"
+import shirt from "../assets/shirt.jpg"
+import shirt2 from "../assets/shirt2.jpg"
 import Cards from './carouselCard';
 
 const style = {
