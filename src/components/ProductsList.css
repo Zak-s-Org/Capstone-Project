@@ -1,0 +1,22 @@
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Four columns */
+    gap: 16px; /* Adjust gap as needed */
+}
+
+.product-item {
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    padding: 16px;
+    text-align: center;
+    background-color: darkgray;
+}
+
+.product-img {
+    max-width: 100%;
+    height: 200px;
+}
+
+.product-price {
+    font-weight: bold;
+}

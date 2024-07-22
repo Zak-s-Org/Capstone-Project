@@ -13,7 +13,7 @@ const background = {
             <h2>{name}</h2>
             <p>{description}</p>
             <p>{price}</p>
-            <img src={img}  style={{ width: '50%', height: 'auto' , maxHeight:"400px" }} />
+            <img src={img}  style={{ width: '50%', height: '120px' , maxHeight:"400px"}} />
             </Paper>
         </div>
     )
