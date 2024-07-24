@@ -18,8 +18,7 @@ export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
       setIsLoggedIn(false);
       navigate('/home'); // Redirect to home instead of login on logout
     } else if (page === 'Login') {
-      setIsLoggedIn(true);
-      navigate('/');
+      navigate('/login'); // Navigate to login page
     } else {
       navigate(`/${page.toLowerCase()}`);
     }
@@ -31,7 +30,7 @@ export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
         <Toolbar>
           <img src={bz} alt="BZ Logo" style={{ width: '50px', height: '50px', marginRight: '10px' }} />
           <Typography variant="h6" noWrap component="div" sx={{ display: { xs: 'none', sm: 'block' }, color: '#000' }}>
-            My App
+            BZ Corp
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -49,3 +48,4 @@ export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
     </Box>
   );
 }
+

@@ -1,3 +1,4 @@
+import React from 'react';
 import Stack from '@mui/material/Stack';
 import { pink } from '@mui/material/colors';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -11,21 +12,21 @@ function HomeIcon(props) {
 }
 
 const style = {
-    backgroundColor : "black"
+  backgroundColor: "black"
 }
 
 const welcome = {
-    color: "#a1a1aa"
+  color: "#a1a1aa"
 }
 
-export default function Login (){
-    return (
-        <div className="login" style={style}>
-            <div className="welcome">
-            <h1 style={welcome}>welcome</h1>
-            <HomeIcon sx={{ color: pink[500] , width:"100px" , height:"100px" }} />
-            </div>
-            <hr></hr>    
+export default function Login() {
+  return (
+    <div className="login" style={style}>
+      <div className="welcome">
+        <h1 style={welcome}>welcome</h1>
+        <HomeIcon sx={{ color: pink[500], width: "100px", height: "100px" }} />
       </div>
-    )
+      <hr />
+    </div>
+  );
 }

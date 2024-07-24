@@ -14,10 +14,10 @@ function App() {
     <div>
       <NavBar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       <Routes>
-        <Route path="/" element={<Navigate to="/home" />} />
+        <Route path="/" element={isLoggedIn ? <Navigate to="/home" /> : <Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/cart" element={isLoggedIn ? <Cart cartItems={cartItems} /> : <Navigate to="/login" />} />
-        <Route path="/home" element={<HomePage isLoggedIn={isLoggedIn} cartItems={cartItems} setCartItems={setCartItems}/>} />
+        <Route path="/cart" element={isLoggedIn ? <Cart cartItems={cartItems} setCartItems={setCartItems} /> : <Navigate to="/login" />} />
+        <Route path="/home" element={<HomePage isLoggedIn={isLoggedIn} cartItems={cartItems} setCartItems={setCartItems} />} />
       </Routes>
     </div>
   );
