@@ -7,7 +7,7 @@ const app = express()
 app.use(express.json())
 createTables()
 
-app.use("/api/users" , postsrouter)
+app.use("/api" , postsrouter)
 const PORT = process.env.PORT  || 3000
 
 app.listen(PORT, ()=>{
