@@ -2,6 +2,8 @@ import React from 'react';
 import { styled } from '@mui/system';
 import { Grid, Paper, Typography, TextField, Checkbox, Button, Box, Divider, Avatar } from '@mui/material';
 import { FaGoogle } from 'react-icons/fa';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import '@fontsource/dancing-script';
 
 const style = {
   color: "#BDBDBD"
@@ -28,6 +30,12 @@ const StyledPaper = styled(Paper)({
   borderRadius: '10px'
 });
 
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Dancing Script, cursive',
+  },
+});
+
 const LoginPage = ({ setIsLoggedIn }) => {
   const handleLogin = () => {
     // Perform authentication here (e.g., validate credentials)
@@ -40,6 +48,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} md={7} lg={6}>
           <StyledPaper>
+            <Typography variant="h3" gutterBottom>Welcome!</Typography>
             <Typography style={style} variant="h4" gutterBottom>Sign In</Typography>
             <TextField
               fullWidth
@@ -74,13 +83,15 @@ const LoginPage = ({ setIsLoggedIn }) => {
           <Grid container spacing={2}>
             {testimonials.map((testimonial, index) => (
               <Grid item xs={12} key={index}>
-                <Paper style={{ backgroundColor: '#152128', padding: '1rem', borderRadius: '10px', display: 'flex', alignItems: 'center', color: '#BDBDBD' }}>
-                  <Avatar src={testimonial.avatar} style={{ border: '2px solid #BDBDBD', margin: '0 1rem 0 0' }} />
-                  <Box>
-                    <Typography variant="h6">{testimonial.name}</Typography>
-                    <Typography variant="body2">{testimonial.message}</Typography>
-                  </Box>
-                </Paper>
+                <ThemeProvider theme={theme}>
+                  <Paper style={{ backgroundColor: '#152128', padding: '1rem', borderRadius: '10px', display: 'flex', alignItems: 'center', color: '#BDBDBD' }}>
+                    <Avatar src={testimonial.avatar} style={{ border: '2px solid #BDBDBD', margin: '0 1rem 0 0' }} />
+                    <Box>
+                      <Typography variant="h6">{testimonial.name}</Typography>
+                      <Typography variant="body2">{testimonial.message}</Typography>
+                    </Box>
+                  </Paper>
+                </ThemeProvider>
               </Grid>
             ))}
           </Grid>
