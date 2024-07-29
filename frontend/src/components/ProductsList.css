@@ -1,22 +1,49 @@
+/* ProductsList.css */
+
 .product-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Four columns */
-    gap: 16px; /* Adjust gap as needed */
-}
-
-.product-item {
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .product-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .product-item {
+    flex: 1;
     border: 1px solid #ccc;
-    padding: 16px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    background-color: darkgray;
-}
-
-.product-img {
-    max-width: 100%;
-    height: 200px;
-}
-
-.product-price {
+  }
+  
+  .product-item h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .product-item p {
+    margin: 5px 0;
+  }
+  
+  .product-price {
     font-weight: bold;
-}
+    margin: 10px 0;
+  }
+  
+  .product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .product-actions .MuiTextField-root {
+    width: 100px;
+  }
+  

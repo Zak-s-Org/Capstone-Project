@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
-  const pages = isLoggedIn ? ['Home', 'Cart', 'Logout'] : ['Login'];
+  const pages = isLoggedIn ? ['Home', 'Cart', 'Logout', 'Admin'] : ['Login'];
 
   const handleMenuItemClick = (page) => {
     if (page === 'Logout') {

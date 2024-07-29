@@ -23,6 +23,8 @@ const seedUserInfo = async ()=>{
           `, ["Johnathonthomas@gmail.com", hashedPassword1, "Arnoldjack@gmail.com", hashedPassword2]);
        
           await pool.query(` 
+              INSERT INTO products (name, description, price) VALUES ('Creeper Shirt', 'Kaboom!', 690.00);
+              INSERT INTO products (name, description, price) VALUES ('The Best Cheese Printer Ever', 'Show everyone your cheesy side!', 420.00);
               INSERT INTO products (name, description, price) VALUES ('Apple iPhone 13', 'Latest model with A15 Bionic chip', 799.00);
               INSERT INTO products (name, description, price) VALUES ('Samsung Galaxy S21', 'Flagship phone with stunning display', 699.00);
               INSERT INTO products (name, description, price) VALUES ('Sony WH-1000XM4', 'Industry-leading noise canceling headphones', 348.00);

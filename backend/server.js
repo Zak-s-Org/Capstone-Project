@@ -1,9 +1,11 @@
 const express = require(`express`)
+const cors = require('cors');
 const createTables = require(`./utils/tables`)
 const postsrouter = require(`./routes/routes`)
 require("dotenv").config()
 
 const app = express()
+app.use(cors());
 app.use(express.json())
 createTables()
 
