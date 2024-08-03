@@ -1,9 +1,13 @@
-import React from 'react';
+// src/pages/LoginPage.js
+import React, { useState } from 'react';
 import { styled } from '@mui/system';
-import { Grid, Paper, Typography, TextField, Checkbox, Button, Box, Divider, Avatar } from '@mui/material';
+import { Grid, Paper, Typography, TextField, Checkbox, Button, Box, Divider, Avatar, Snackbar, IconButton } from '@mui/material';
 import { FaGoogle } from 'react-icons/fa';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import '@fontsource/dancing-script';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
 
 const style = {
   color: "#BDBDBD"
@@ -20,13 +24,13 @@ const StyledContainer = styled('div')({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: '#889B9E', // First color
+  backgroundColor: '#889B9E',
   color: '#FFFFFF',
 });
 
 const StyledPaper = styled(Paper)({
   padding: '2rem',
-  backgroundColor: '#152128', // Second color
+  backgroundColor: '#152128',
   borderRadius: '10px'
 });
 
@@ -36,11 +40,35 @@ const theme = createTheme({
   },
 });
 
-const LoginPage = ({ setIsLoggedIn }) => {
-  const handleLogin = () => {
-    // Perform authentication here (e.g., validate credentials)
-    setIsLoggedIn(true);
-    navigate('/home'); // Redirect to home page after successful login
+const LoginPage = ({ setIsLoggedIn, setBearerToken }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/login', { email, password });
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+      setBearerToken(token);
+      setIsLoggedIn(true);
+      navigate('/home');
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.data.error || 'Login failed. Please check your email and password.');
+      } else if (error.request) {
+        setError('No response from server. Please try again later.');
+      } else {
+        setError('An error occurred. Please try again.');
+      }
+      setOpen(true);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -55,8 +83,8 @@ const LoginPage = ({ setIsLoggedIn }) => {
               label="Email"
               variant="outlined"
               margin="normal"
-              InputLabelProps={{ style: { color: '#2A2A2A' } }}
-              InputProps={{ style: { backgroundColor: '#BDBDBD', color: '#FFFFFF' } }}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               fullWidth
@@ -64,8 +92,8 @@ const LoginPage = ({ setIsLoggedIn }) => {
               type="password"
               variant="outlined"
               margin="normal"
-              InputLabelProps={{ style: { color: '#2A2A2A' } }}
-              InputProps={{ style: { backgroundColor: '#BDBDBD', color: '#FFFFFF' } }}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
               <Box display="flex" alignItems="center">
@@ -97,6 +125,18 @@ const LoginPage = ({ setIsLoggedIn }) => {
           </Grid>
         </Grid>
       </Grid>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={error}
+        action={
+          <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
     </StyledContainer>
   );
 };

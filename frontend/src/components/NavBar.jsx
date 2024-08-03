@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -8,20 +8,29 @@ import MenuItem from '@mui/material/MenuItem';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import bz from '../assets/bz.webp';
 import { useNavigate } from 'react-router-dom';
+import { TextField, InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
-export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
+export default function NavBar({ isLoggedIn, setIsLoggedIn, setSearchQuery }) {
   const navigate = useNavigate();
   const pages = isLoggedIn ? ['Home', 'Cart', 'Logout', 'Admin'] : ['Login'];
+  const [search, setSearch] = useState('');
 
   const handleMenuItemClick = (page) => {
     if (page === 'Logout') {
       setIsLoggedIn(false);
-      navigate('/home'); // Redirect to home instead of login on logout
+      navigate('/home');
     } else if (page === 'Login') {
-      navigate('/login'); // Navigate to login page
+      navigate('/login');
     } else {
       navigate(`/${page.toLowerCase()}`);
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearchQuery(search);
+    navigate('/products');
   };
 
   return (
@@ -33,6 +42,24 @@ export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
             BZ Corp
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
+          <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center' }}>
+            <TextField
+              variant="outlined"
+              size="small"
+              placeholder="Search products"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton type="submit">
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </form>
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <MenuItem key={page} onClick={() => handleMenuItemClick(page)}>
@@ -48,4 +75,3 @@ export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
     </Box>
   );
 }
-

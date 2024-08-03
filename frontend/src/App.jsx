@@ -10,15 +10,16 @@ import AdminPage from './pages/AdminPage';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const [bearerToken, setBearerToken] = useState('');
 
   return (
     <div>
       <NavBar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       <Routes>
         <Route path="/" element={isLoggedIn ? <Navigate to="/home" /> : <Navigate to="/login" />} />
-        <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/cart" element={isLoggedIn ? <Cart cartItems={cartItems} setCartItems={setCartItems} /> : <Navigate to="/login" />} />
-        <Route path="/home" element={<HomePage isLoggedIn={isLoggedIn} cartItems={cartItems} setCartItems={setCartItems} />} />
+        <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} setBearerToken={setBearerToken} />} />
+        <Route path="/cart" element={isLoggedIn ? <Cart cartItems={cartItems} setCartItems={setCartItems} bearerToken={bearerToken} /> : <Navigate to="/login" />} />
+        <Route path="/home" element={<HomePage isLoggedIn={isLoggedIn} cartItems={cartItems} setCartItems={setCartItems} bearerToken={bearerToken} />} />
         <Route path="/admin" element={<AdminPage isLoggedIn={isLoggedIn} />} />
       </Routes>
     </div>

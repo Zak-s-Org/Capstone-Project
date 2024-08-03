@@ -3,14 +3,16 @@ import axios from 'axios';
 import { Button, TextField } from '@mui/material';
 import './ProductsList.css';
 
-const ProductsList = ({ isLoggedIn, userId, cartItems, setCartItems }) => {
+const ProductsList = ({ isLoggedIn, userId, cartItems, setCartItems, searchQuery, bearerToken }) => {
   const [products, setProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/products');
+        const response = await axios.get('http://localhost:3000/api/products', {
+          params: { query: searchQuery },
+        });
         console.log('Fetched products:', response.data);
         setProducts(response.data);
         setQuantities(response.data.reduce((acc, product) => {
@@ -22,22 +24,8 @@ const ProductsList = ({ isLoggedIn, userId, cartItems, setCartItems }) => {
       }
     };
 
-    const fetchCartItems = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3000/api/carts/user/${userId}`);
-        console.log('Fetched cart items:', response.data);
-        setCartItems(response.data.reduce((acc, item) => {
-          acc[item.product_id] = item;
-          return acc;
-        }, {}));
-      } catch (error) {
-        console.error('Error fetching cart items:', error);
-      }
-    };
-
     fetchProducts();
-    fetchCartItems();
-  }, [userId]);
+  }, [searchQuery]);
 
   const handleQuantityChange = (productId, quantity) => {
     setQuantities(prevQuantities => ({
