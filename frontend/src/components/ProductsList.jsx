@@ -1,11 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Button, TextField } from '@mui/material';
 import './ProductsList.css';
 
-const ProductsList = ({ isLoggedIn, userId, cartItems, setCartItems, searchQuery, bearerToken }) => {
+const ProductsList = ({ searchQuery }) => {
   const [products, setProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
+  const [cartItems, setCartItems] = useState({});
+  const [userId, setUserId] = useState(null);
+
+  const bearerToken = localStorage.getItem('bearerToken');
+  const isLoggedIn = !!bearerToken;
+
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  useEffect(() => {
+    if (bearerToken) {
+      try {
+        const decodeToken = (token) => {
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+          return JSON.parse(jsonPayload);
+        };
+
+        const decodedToken = decodeToken(bearerToken);
+        setUserId(decodedToken.id); // Assuming `id` is the field for user ID in the token
+      } catch (error) {
+        console.error('Failed to decode token:', error);
+      }
+    }
+  }, [bearerToken]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -15,10 +43,6 @@ const ProductsList = ({ isLoggedIn, userId, cartItems, setCartItems, searchQuery
         });
         console.log('Fetched products:', response.data);
         setProducts(response.data);
-        setQuantities(response.data.reduce((acc, product) => {
-          acc[product.id] = 1;
-          return acc;
-        }, {}));
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -26,6 +50,41 @@ const ProductsList = ({ isLoggedIn, userId, cartItems, setCartItems, searchQuery
 
     fetchProducts();
   }, [searchQuery]);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      if (isLoggedIn) {
+        try {
+          const response = await axios.get(`http://localhost:3000/api/carts/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${bearerToken}`
+            }
+          });
+          const cartData = response.data.reduce((acc, item) => {
+            acc[item.product_id] = item;
+            return acc;
+          }, {});
+          setCartItems(cartData);
+        } catch (error) {
+          console.error('Error fetching cart items:', error);
+        }
+      }
+    };
+
+    fetchCartItems();
+  }, [isLoggedIn, userId, bearerToken]);
+
+  useEffect(() => {
+    const initialQuantities = products.reduce((acc, product) => {
+      if (cartItems[product.id]) {
+        acc[product.id] = cartItems[product.id].quantity;
+      } else {
+        acc[product.id] = 1;
+      }
+      return acc;
+    }, {});
+    setQuantities(initialQuantities);
+  }, [products, cartItems]);
 
   const handleQuantityChange = (productId, quantity) => {
     setQuantities(prevQuantities => ({
@@ -43,6 +102,10 @@ const ProductsList = ({ isLoggedIn, userId, cartItems, setCartItems, searchQuery
         user_id: userId,
         product_id: productId,
         quantity: quantity,
+      }, {
+        headers: {
+          Authorization: `Bearer ${bearerToken}`
+        }
       });
 
       setCartItems(prevCartItems => {
@@ -59,8 +122,11 @@ const ProductsList = ({ isLoggedIn, userId, cartItems, setCartItems, searchQuery
         }
         return updatedCartItems;
       });
+
+      alert('Item added to cart successfully!');
     } catch (error) {
       console.error('Error adding to cart:', error);
+      alert('Failed to add item to cart.');
     }
   };
 
@@ -78,22 +144,34 @@ const ProductsList = ({ isLoggedIn, userId, cartItems, setCartItems, searchQuery
             <p className="product-price">${product.price}</p>
             {isLoggedIn && (
               <div className="product-actions">
-                <TextField
-                  type="number"
-                  label="Quantity"
-                  value={quantities[product.id]}
-                  onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value, 10))}
-                  InputProps={{ inputProps: { min: 1 } }}
-                  variant="outlined"
-                  size="small"
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => addToCart(product.id)}
-                >
-                  Add to Cart
-                </Button>
+                {cartItems[product.id] ? (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => navigate('/cart')} // Use navigate to redirect to the cart page
+                  >
+                    View Cart
+                  </Button>
+                ) : (
+                  <>
+                    <TextField
+                      type="number"
+                      label="Quantity"
+                      value={quantities[product.id] || 1}
+                      onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value, 10))}
+                      InputProps={{ inputProps: { min: 1 } }}
+                      variant="outlined"
+                      size="small"
+                    />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => addToCart(product.id)}
+                    >
+                      Add to Cart
+                    </Button>
+                  </>
+                )}
               </div>
             )}
           </div>

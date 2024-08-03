@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -12,9 +13,38 @@ const Admin = () => {
   const [editProductId, setEditProductId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isForbidden, setIsForbidden] = useState(false);
+  const navigate = useNavigate();
+
+  const decodeToken = (token) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
-    fetchData();
+    const token = localStorage.getItem('bearerToken');
+    if (token) {
+      const decodedToken = decodeToken(token);
+      if (decodedToken && decodedToken.id === 1) {
+        fetchData();
+      } else {
+        setIsForbidden(true);
+      }
+    } else {
+      setIsForbidden(true);
+    }
   }, []);
 
   const fetchData = async () => {
@@ -104,6 +134,10 @@ const Admin = () => {
       console.error("Error deleting product:", error);
     }
   };
+
+  if (isForbidden) {
+    return <div>Forbidden</div>;
+  }
 
   if (loading) {
     return <div>Loading...</div>;
@@ -201,4 +235,3 @@ const Admin = () => {
 };
 
 export default Admin;
-

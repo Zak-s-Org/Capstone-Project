@@ -1,4 +1,3 @@
-// src/pages/LoginPage.js
 import React, { useState } from 'react';
 import { styled } from '@mui/system';
 import { Grid, Paper, Typography, TextField, Checkbox, Button, Box, Divider, Avatar, Snackbar, IconButton } from '@mui/material';
@@ -40,7 +39,7 @@ const theme = createTheme({
   },
 });
 
-const LoginPage = ({ setIsLoggedIn, setBearerToken }) => {
+const LoginPage = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -51,9 +50,8 @@ const LoginPage = ({ setIsLoggedIn, setBearerToken }) => {
     try {
       const response = await axios.post('http://localhost:3000/api/login', { email, password });
       const { token } = response.data;
-      localStorage.setItem('token', token);
-      setBearerToken(token);
-      setIsLoggedIn(true);
+      localStorage.setItem('bearerToken', token);
+      setIsLoggedIn(true); // Set logged in state to true
       navigate('/home');
     } catch (error) {
       if (error.response) {

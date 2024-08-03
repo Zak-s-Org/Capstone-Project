@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, TextField } from '@mui/material';
 
-const Cart = ({ bearerToken }) => {
+const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [products, setProducts] = useState({});
   const [error, setError] = useState('');
+  const bearerToken = localStorage.getItem('bearerToken');
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -22,7 +23,7 @@ const Cart = ({ bearerToken }) => {
         }
 
         const data = await response.json();
-        console.log('Fetched cart items:', data); // Debugging log
+        console.log('Fetched cart items:', data);
         setCartItems(data);
         const productIds = data.map(item => item.product_id);
         fetchProductDetails(productIds);

@@ -6,22 +6,23 @@ const seedUserInfo = async ()=>{
         const saltRounds = 10
         const hashedPassword1 = await bcrypt.hash("password123", saltRounds)
         const hashedPassword2 = await bcrypt.hash("password456", saltRounds)
+        const hashedPasswordAdmin = await bcrypt.hash("admin", saltRounds)
         
         await pool.query(`
-          DELETE FROM carts`)
-          
-        await pool.query(`
-          DELETE FROM users`)
-
-        await pool.query(`
-          DELETE FROM products`)
-        
+          DELETE FROM carts;
+          DELETE FROM users;
+          DELETE FROM products;
+          ALTER SEQUENCE carts_id_seq RESTART WITH 1;
+          ALTER SEQUENCE users_id_seq RESTART WITH 1;
+          ALTER SEQUENCE products_id_seq RESTART WITH 1;
+        `);
         
         await pool.query(`
             INSERT INTO users (email, password) VALUES
             ($1, $2),
-            ($3, $4);
-          `, ["Johnathonthomas@gmail.com", hashedPassword1, "Arnoldjack@gmail.com", hashedPassword2]);
+            ($3, $4),
+            ($5, $6);
+          `, ["admin", hashedPasswordAdmin, "Johnathonthomas@gmail.com", hashedPassword1, "Arnoldjack@gmail.com", hashedPassword2]);
        
         await pool.query(` 
             INSERT INTO products (name, description, price) VALUES ('Creeper Shirt', 'Kaboom!', 690.00);

@@ -3,19 +3,6 @@ const pool = require("./pool")
 const createTables = async () => {
     try {
 
-        // await pool.query(`
-        //     DROP TABLE IF EXISTS carts;
-        // `);
-        
-        // await pool.query(`
-        //     DROP TABLE IF EXISTS users;
-        // `);
-
-        // await pool.query(`
-        //     DROP TABLE IF EXISTS products;
-        // `);
-
-
         await pool.query(`
             CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
