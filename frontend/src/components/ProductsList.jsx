@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { Button, TextField } from '@mui/material';
 import './ProductsList.css';
 
-const ProductsList = ({ searchQuery }) => {
+const ProductsList = () => {
   const [products, setProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [cartItems, setCartItems] = useState({});
@@ -14,6 +14,12 @@ const ProductsList = ({ searchQuery }) => {
   const isLoggedIn = !!bearerToken;
 
   const navigate = useNavigate(); // Initialize useNavigate
+  const location = useLocation(); // Get the current location
+
+  // Function to extract search query from URL parameters
+  const getQueryParams = (search) => {
+    return new URLSearchParams(search);
+  };
 
   useEffect(() => {
     if (bearerToken) {
@@ -37,6 +43,9 @@ const ProductsList = ({ searchQuery }) => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      const params = getQueryParams(location.search); // Get URL parameters
+      const searchQuery = params.get('search') || ''; // Extract search query
+
       try {
         const response = await axios.get('http://localhost:3000/api/products', {
           params: { query: searchQuery },
@@ -49,7 +58,7 @@ const ProductsList = ({ searchQuery }) => {
     };
 
     fetchProducts();
-  }, [searchQuery]);
+  }, [location.search]); // Refetch products when the search query in the URL changes
 
   useEffect(() => {
     const fetchCartItems = async () => {

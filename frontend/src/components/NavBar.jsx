@@ -64,8 +64,12 @@ export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Set search query logic here
-    navigate('/products');
+    // Navigate to the products page with the search query as a URL parameter
+    if (search.trim()) {
+      navigate(`/products?search=${encodeURIComponent(search.trim())}`);
+    } else {
+      navigate('/products'); // If no search term, navigate to products without a query
+    }
   };
 
   return (
