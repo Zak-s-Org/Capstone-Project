@@ -16,6 +16,7 @@ const Admin = () => {
   const [isForbidden, setIsForbidden] = useState(false);
   const navigate = useNavigate();
 
+  // Decode the token
   const decodeToken = (token) => {
     try {
       const base64Url = token.split('.')[1];
@@ -35,14 +36,21 @@ const Admin = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('bearerToken');
+    console.log("Token from localStorage:", token); // Debugging token retrieval
+
     if (token) {
       const decodedToken = decodeToken(token);
-      if (decodedToken && decodedToken.id === 1) {
+      console.log("Decoded Token:", decodedToken); // Debugging decoded token
+
+      // Check if user ID is 1 or if the user has the 'admin' role
+      if (decodedToken && (decodedToken.id === 1 || decodedToken.role === 'admin')) {
         fetchData();
       } else {
+        console.warn("User does not have admin privileges or token is invalid");
         setIsForbidden(true);
       }
     } else {
+      console.warn("No token found, redirecting to login");
       setIsForbidden(true);
     }
   }, []);
@@ -55,6 +63,9 @@ const Admin = () => {
         axios.get("/api/users"),
         axios.get("/api/products"),
       ]);
+      console.log("Users fetched:", usersResponse.data); // Debugging users data
+      console.log("Products fetched:", productsResponse.data); // Debugging products data
+
       setUsers(Array.isArray(usersResponse.data) ? usersResponse.data : []);
       setProducts(Array.isArray(productsResponse.data) ? productsResponse.data : []);
     } catch (error) {
@@ -86,22 +97,26 @@ const Admin = () => {
       fetchData();
     } catch (error) {
       console.error("Error submitting user form:", error);
+      setError("Error submitting user form. Please try again.");
     }
   };
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Ensure price is converted to a number
+      const productData = { ...productForm, price: parseFloat(productForm.price) };
       if (productEditMode) {
-        await axios.put(`/api/products/${editProductId}`, productForm);
+        await axios.put(`/api/products/${editProductId}`, productData);
       } else {
-        await axios.post("/api/products", productForm);
+        await axios.post("/api/products", productData);
       }
       setProductForm({ name: "", description: "", price: "" });
       setProductEditMode(false);
       fetchData();
     } catch (error) {
       console.error("Error submitting product form:", error);
+      setError("Error submitting product form. Please try again.");
     }
   };
 
@@ -123,6 +138,7 @@ const Admin = () => {
       fetchData();
     } catch (error) {
       console.error("Error deleting user:", error);
+      setError("Error deleting user. Please try again.");
     }
   };
 
@@ -132,11 +148,13 @@ const Admin = () => {
       fetchData();
     } catch (error) {
       console.error("Error deleting product:", error);
+      setError("Error deleting product. Please try again.");
     }
   };
 
+  // If forbidden, provide feedback instead of redirecting immediately
   if (isForbidden) {
-    return <div>Forbidden</div>;
+    return <div>Forbidden: You do not have access to this page.</div>;
   }
 
   if (loading) {

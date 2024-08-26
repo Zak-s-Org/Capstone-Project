@@ -5,10 +5,13 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [products, setProducts] = useState({});
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true); // Added loading state
   const bearerToken = localStorage.getItem('bearerToken');
 
   useEffect(() => {
     const fetchCartItems = async () => {
+      if (!bearerToken) return;
+
       try {
         const response = await fetch('http://localhost:3000/api/carts/user/me', {
           method: 'GET',
@@ -25,15 +28,20 @@ const Cart = () => {
         const data = await response.json();
         console.log('Fetched cart items:', data);
         setCartItems(data);
-        const productIds = data.map(item => item.product_id);
+
+        const productIds = data.map(item => item.productId); // Use camelCase
         fetchProductDetails(productIds);
       } catch (error) {
         console.error('Error fetching cart items:', error.message);
         setError('Error fetching cart items. Please try again later.');
+      } finally {
+        setLoading(false); // Set loading to false after fetching data
       }
     };
 
     const fetchProductDetails = async (productIds) => {
+      if (productIds.length === 0) return;
+
       try {
         const response = await fetch('http://localhost:3000/api/products/byIds', {
           method: 'POST',
@@ -107,16 +115,16 @@ const Cart = () => {
     }
   };
 
+  if (loading) {
+    return <Typography variant="h6">Loading cart items...</Typography>;
+  }
+
+  if (error) {
+    return <Typography variant="h6" color="error">{error}</Typography>;
+  }
+
   return (
     <div>
-      <Typography variant="subtitle1" style={{ margin: '20px 0' }}>
-        Bearer Token: {bearerToken}
-      </Typography>
-      {error && (
-        <Typography variant="subtitle1" color="error" style={{ margin: '20px 0' }}>
-          {error}
-        </Typography>
-      )}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -129,12 +137,12 @@ const Cart = () => {
           <TableBody>
             {cartItems.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{products[item.product_id]?.name || 'Loading...'}</TableCell>
+                <TableCell>{products[item.productId]?.name || 'Loading...'}</TableCell>
                 <TableCell>
                   <TextField
                     type="number"
                     value={item.quantity}
-                    onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                    onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value, 10))}
                     inputProps={{ min: 1 }}
                   />
                 </TableCell>

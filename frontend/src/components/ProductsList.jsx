@@ -53,7 +53,7 @@ const ProductsList = ({ searchQuery }) => {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      if (isLoggedIn) {
+      if (userId && isLoggedIn) {  // Ensure userId is set before fetching cart items
         try {
           const response = await axios.get(`http://localhost:3000/api/carts/${userId}`, {
             headers: {
@@ -61,7 +61,7 @@ const ProductsList = ({ searchQuery }) => {
             }
           });
           const cartData = response.data.reduce((acc, item) => {
-            acc[item.product_id] = item;
+            acc[item.productId] = item; // Corrected to use productId
             return acc;
           }, {});
           setCartItems(cartData);
@@ -76,11 +76,7 @@ const ProductsList = ({ searchQuery }) => {
 
   useEffect(() => {
     const initialQuantities = products.reduce((acc, product) => {
-      if (cartItems[product.id]) {
-        acc[product.id] = cartItems[product.id].quantity;
-      } else {
-        acc[product.id] = 1;
-      }
+      acc[product.id] = cartItems[product.id]?.quantity || 1;
       return acc;
     }, {});
     setQuantities(initialQuantities);
@@ -94,13 +90,18 @@ const ProductsList = ({ searchQuery }) => {
   };
 
   const addToCart = async (productId) => {
+    if (!userId) {
+      alert('User not identified');
+      return;
+    }
+
     const product = products.find(p => p.id === productId);
     const quantity = quantities[productId];
 
     try {
       await axios.post('http://localhost:3000/api/carts', {
-        user_id: userId,
-        product_id: productId,
+        userId, // Corrected to use camelCase
+        productId, // Corrected to use camelCase
         quantity: quantity,
       }, {
         headers: {
@@ -125,8 +126,13 @@ const ProductsList = ({ searchQuery }) => {
 
       alert('Item added to cart successfully!');
     } catch (error) {
-      console.error('Error adding to cart:', error);
-      alert('Failed to add item to cart.');
+      if (error.response) {
+        console.error('Error adding to cart:', error.response.data);
+        alert(`Failed to add item to cart: ${error.response.data.error}`);
+      } else {
+        console.error('Error adding to cart:', error);
+        alert('Failed to add item to cart.');
+      }
     }
   };
 
@@ -139,6 +145,11 @@ const ProductsList = ({ searchQuery }) => {
       <div key={rowIndex} className="product-row">
         {row.map(product => (
           <div key={product.id} className="product-item">
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              className="product-image" 
+            />
             <h2>{product.name}</h2>
             <p>{product.description}</p>
             <p className="product-price">${product.price}</p>
@@ -179,7 +190,7 @@ const ProductsList = ({ searchQuery }) => {
       </div>
     ));
   };
-
+  
   return (
     <div className="product-grid">
       {products.length === 0 ? (

@@ -9,31 +9,24 @@ const seedUserInfo = async ()=>{
         const hashedPasswordAdmin = await bcrypt.hash("admin", saltRounds)
         
         await pool.query(`
-          DELETE FROM carts;
-          DELETE FROM users;
-          DELETE FROM products;
-          ALTER SEQUENCE carts_id_seq RESTART WITH 1;
-          ALTER SEQUENCE users_id_seq RESTART WITH 1;
-          ALTER SEQUENCE products_id_seq RESTART WITH 1;
+          DELETE FROM public."Users";
+          DELETE FROM public."Products";
+          ALTER SEQUENCE public."Users_id_seq" RESTART WITH 1;
+          ALTER SEQUENCE public."Products_id_seq" RESTART WITH 1;
         `);
         
         await pool.query(`
-            INSERT INTO users (email, password) VALUES
+            INSERT INTO public."Users" (email, password) VALUES
             ($1, $2),
             ($3, $4),
             ($5, $6);
           `, ["admin", hashedPasswordAdmin, "Johnathonthomas@gmail.com", hashedPassword1, "Arnoldjack@gmail.com", hashedPassword2]);
        
-        await pool.query(` 
-            INSERT INTO products (name, description, price) VALUES ('Creeper Shirt', 'Kaboom!', 690.00);
-            INSERT INTO products (name, description, price) VALUES ('The Best Cheese Printer Ever', 'Show everyone your cheesy side!', 420.00);
-            INSERT INTO products (name, description, price) VALUES ('Apple iPhone 13', 'Latest model with A15 Bionic chip', 799.00);
-            INSERT INTO products (name, description, price) VALUES ('Samsung Galaxy S21', 'Flagship phone with stunning display', 699.00);
-            INSERT INTO products (name, description, price) VALUES ('Sony WH-1000XM4', 'Industry-leading noise canceling headphones', 348.00);
-          `)
           
         await pool.query(` 
-          INSERT INTO carts (user_id, product_id, quantity) VALUES (1, 1, 5);
+            INSERT INTO public."Products" (name, description, price, image) VALUES ('Apple iPhone 13', 'Latest model with A15 Bionic chip', 799.00, 'https://ss7.vzw.com/is/image/VerizonWireless/apple-iphone-13-starlight-09142021-b?wid=465&hei=465&fmt=webp');
+            INSERT INTO public."Products" (name, description, price, image) VALUES ('Samsung Galaxy S21', 'Flagship phone with stunning display', 699.00, 'https://m.media-amazon.com/images/I/41ytILS8Y+S.jpg');
+            INSERT INTO public."Products" (name, description, price, image) VALUES ('Sony WH-1000XM4', 'Industry-leading noise canceling headphones', 348.00, 'https://m.media-amazon.com/images/I/41ytILS8Y+S.jpg');
           `)
 
 

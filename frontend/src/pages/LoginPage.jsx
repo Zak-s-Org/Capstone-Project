@@ -49,11 +49,20 @@ const LoginPage = ({ setIsLoggedIn }) => {
   const handleLogin = async () => {
     try {
       const response = await axios.post('http://localhost:3000/api/login', { email, password });
-      const { token } = response.data;
-      localStorage.setItem('bearerToken', token);
-      setIsLoggedIn(true); // Set logged in state to true
-      navigate('/home');
+      
+      // Check if the response status is 200 (success)
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem('bearerToken', token);
+        setIsLoggedIn(true); // Set logged in state to true
+        navigate('/home'); // Redirect to home page
+      } else {
+        // Handle cases where the status code is not 200 (e.g., 401 Unauthorized)
+        setError('Login failed. Please check your email and password.');
+        setOpen(true);
+      }
     } catch (error) {
+      // Handle different error scenarios
       if (error.response) {
         setError(error.response.data.error || 'Login failed. Please check your email and password.');
       } else if (error.request) {
@@ -64,6 +73,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
       setOpen(true);
     }
   };
+  
 
   const handleClose = () => {
     setOpen(false);
