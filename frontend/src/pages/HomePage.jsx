@@ -10,7 +10,7 @@ export default function HomePage({ isLoggedIn, cartItems, setCartItems }) {
         <h1>Welcome!</h1>
         <ProductsList isLoggedIn={isLoggedIn} cartItems={cartItems} setCartItems={setCartItems} />
       </div>
-      {isLoggedIn && <h3>Logged In! {bearerToken}</h3>}
+      {isLoggedIn && <h3>Logged In! </h3>}
     </div>
   );
 }
