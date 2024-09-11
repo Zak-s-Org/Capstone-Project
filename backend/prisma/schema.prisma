@@ -8,19 +8,23 @@ datasource db {
 }
 
 model Users {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  password String
-  Carts    Carts[]
-  Orders   Orders[]
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  address     String?  // Optional field for user address
+  phone       String?  // Optional field for user phone number
+  billingInfo String?  // Optional field for billing information
+  role        String   @default("user") // Added role field to identify admins
+  Carts       Carts[]
+  Orders      Orders[]
 }
 
 model Products {
-  id          Int         @id @default(autoincrement())
-  name        String      @unique
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
   description String
   price       Float
-  image       String      @default("https://m.media-amazon.com/images/I/81UoqdISF4L._AC_UY1000_.jpg")
+  image       String    @default("https://m.media-amazon.com/images/I/81UoqdISF4L._AC_UY1000_.jpg") // Default product image
   Carts       Carts[]
   OrderItems  OrderItems[]
 }
