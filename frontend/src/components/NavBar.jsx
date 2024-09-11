@@ -13,9 +13,10 @@ import SearchIcon from '@mui/icons-material/Search';
 
 export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
-  const [search, setSearch] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [userId, setUserId] = useState(null);
 
+  // Function to decode JWT token and extract user details
   const decodeToken = (token) => {
     try {
       const base64Url = token.split('.')[1];
@@ -34,28 +35,19 @@ export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
   };
 
   useEffect(() => {
-    if (isLoggedIn) {
-      const token = localStorage.getItem('bearerToken');
-      if (token) {
-        const decodedToken = decodeToken(token);
-        if (decodedToken && decodedToken.id) {
-          setUserId(decodedToken.id);
-        }
+    const token = localStorage.getItem('bearerToken');
+    if (token) {
+      const decodedToken = decodeToken(token);
+      if (decodedToken && decodedToken.id) {
+        setUserId(decodedToken.id); // Set userId from decoded token
       }
     }
   }, [isLoggedIn]);
-
-  const pages = isLoggedIn ? ['Home', 'Cart', 'Logout'] : ['Home', 'Login'];
-  if (isLoggedIn && userId === 1) {
-    pages.push('Admin');
-  }
 
   const handleMenuItemClick = (page) => {
     if (page === 'Logout') {
       setIsLoggedIn(false);
       localStorage.removeItem('bearerToken'); // Clear the token on logout
-      navigate('/login');
-    } else if (page === 'Login') {
       navigate('/login');
     } else {
       navigate(`/${page.toLowerCase()}`);
@@ -63,14 +55,16 @@ export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
   };
 
   const handleSearch = (e) => {
-    e.preventDefault();
-    // Navigate to the products page with the search query as a URL parameter
-    if (search.trim()) {
-      navigate(`/products?search=${encodeURIComponent(search.trim())}`);
-    } else {
-      navigate('/products'); // If no search term, navigate to products without a query
+    e.preventDefault();  // Prevent the default form submission
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${searchQuery}`);  // Redirect to search results with query
     }
   };
+
+  const pages = isLoggedIn ? ['Home', 'Cart', 'Logout'] : ['Home', 'Login'];
+  if (isLoggedIn && userId === 1) {
+    pages.push('Admin');  // Add Admin page for user with id 1 (admin)
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -86,8 +80,8 @@ export default function NavBar({ isLoggedIn, setIsLoggedIn }) {
               variant="outlined"
               size="small"
               placeholder="Search products"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
