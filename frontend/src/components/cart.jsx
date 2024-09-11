@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, TextField } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate to handle navigation
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [products, setProducts] = useState({});
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true); // Added loading state
+  const [loading, setLoading] = useState(true);
   const bearerToken = localStorage.getItem('bearerToken');
+  const navigate = useNavigate();  
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -26,48 +28,48 @@ const Cart = () => {
         }
 
         const data = await response.json();
-        console.log('Fetched cart items:', data);
         setCartItems(data);
 
-        const productIds = data.map(item => item.productId); // Use camelCase
+        const productIds = data.map(item => item.productId); // Extract product IDs
         fetchProductDetails(productIds);
       } catch (error) {
         console.error('Error fetching cart items:', error.message);
         setError('Error fetching cart items. Please try again later.');
       } finally {
-        setLoading(false); // Set loading to false after fetching data
+        setLoading(false);
       }
     };
 
     const fetchProductDetails = async (productIds) => {
       if (productIds.length === 0) return;
-
+    
       try {
         const response = await fetch('http://localhost:3000/api/products/byIds', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${bearerToken}`
+            'Authorization': `Bearer ${bearerToken}`  // Ensure the token is included if needed
           },
-          body: JSON.stringify({ ids: productIds })
+          body: JSON.stringify({ ids: productIds })  // Sending product IDs in the body
         });
-
+    
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${response.statusText}`);
         }
-
+    
         const data = await response.json();
         const productsMap = data.reduce((acc, product) => {
           acc[product.id] = product;
           return acc;
         }, {});
-        setProducts(productsMap);
+    
+        setProducts(productsMap);  // Storing the products in the state
       } catch (error) {
         console.error('Error fetching product details:', error.message);
         setError('Error fetching product details. Please try again later.');
       }
     };
-
+    
     fetchCartItems();
   }, [bearerToken]);
 
@@ -123,6 +125,11 @@ const Cart = () => {
     return <Typography variant="h6" color="error">{error}</Typography>;
   }
 
+  const totalCost = cartItems.reduce((total, item) => {
+    const product = products[item.productId];
+    return total + (product ? product.price * item.quantity : 0);
+  }, 0);
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -158,6 +165,16 @@ const Cart = () => {
       </TableContainer>
       <div style={{ marginTop: '20px', textAlign: 'right' }}>
         <Typography variant="h6">Total Count: {cartItems.reduce((count, item) => count + item.quantity, 0)}</Typography>
+        <Typography variant="h6">Total Cost: ${totalCost.toFixed(2)}</Typography>
+        {/* Proceed to Checkout Button */}
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={() => navigate('/checkout')}  // Navigate to the updated checkout route
+          style={{ marginTop: '20px' }}
+        >
+          Proceed to Checkout
+        </Button>
       </div>
     </div>
   );
