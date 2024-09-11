@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Admin = () => {
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
-  const [userForm, setUserForm] = useState({ email: "", password: "" });
+  const [userForm, setUserForm] = useState({ email: "", password: "", address: "", phone: "", billingInfo: "" });
   const [productForm, setProductForm] = useState({ name: "", description: "", price: "" });
   const [userEditMode, setUserEditMode] = useState(false);
   const [productEditMode, setProductEditMode] = useState(false);
@@ -16,7 +16,7 @@ const Admin = () => {
   const [isForbidden, setIsForbidden] = useState(false);
   const navigate = useNavigate();
 
-  // Decode the token
+  // Decode the token to check admin privileges
   const decodeToken = (token) => {
     try {
       const base64Url = token.split('.')[1];
@@ -36,21 +36,15 @@ const Admin = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('bearerToken');
-    console.log("Token from localStorage:", token); // Debugging token retrieval
 
     if (token) {
       const decodedToken = decodeToken(token);
-      console.log("Decoded Token:", decodedToken); // Debugging decoded token
-
-      // Check if user ID is 1 or if the user has the 'admin' role
       if (decodedToken && (decodedToken.id === 1 || decodedToken.role === 'admin')) {
         fetchData();
       } else {
-        console.warn("User does not have admin privileges or token is invalid");
         setIsForbidden(true);
       }
     } else {
-      console.warn("No token found, redirecting to login");
       setIsForbidden(true);
     }
   }, []);
@@ -63,27 +57,26 @@ const Admin = () => {
         axios.get("/api/users"),
         axios.get("/api/products"),
       ]);
-      console.log("Users fetched:", usersResponse.data); // Debugging users data
-      console.log("Products fetched:", productsResponse.data); // Debugging products data
-
       setUsers(Array.isArray(usersResponse.data) ? usersResponse.data : []);
       setProducts(Array.isArray(productsResponse.data) ? productsResponse.data : []);
     } catch (error) {
-      console.error("Error fetching data:", error);
       setError("Error fetching data. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Handle changes in the user form input
   const handleUserInputChange = (e) => {
     setUserForm({ ...userForm, [e.target.name]: e.target.value });
   };
 
+  // Handle changes in the product form input
   const handleProductInputChange = (e) => {
     setProductForm({ ...productForm, [e.target.name]: e.target.value });
   };
 
+  // Submit the user form to add or update a user
   const handleUserSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -92,19 +85,18 @@ const Admin = () => {
       } else {
         await axios.post("/api/users", userForm);
       }
-      setUserForm({ email: "", password: "" });
+      setUserForm({ email: "", password: "", address: "", phone: "", billingInfo: "" });
       setUserEditMode(false);
       fetchData();
     } catch (error) {
-      console.error("Error submitting user form:", error);
       setError("Error submitting user form. Please try again.");
     }
   };
 
+  // Submit the product form to add or update a product
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Ensure price is converted to a number
       const productData = { ...productForm, price: parseFloat(productForm.price) };
       if (productEditMode) {
         await axios.put(`/api/products/${editProductId}`, productData);
@@ -115,44 +107,45 @@ const Admin = () => {
       setProductEditMode(false);
       fetchData();
     } catch (error) {
-      console.error("Error submitting product form:", error);
       setError("Error submitting product form. Please try again.");
     }
   };
 
+  // Edit a user's information
   const handleUserEdit = (user) => {
     setUserForm(user);
     setUserEditMode(true);
     setEditUserId(user.id);
   };
 
+  // Edit a product's information
   const handleProductEdit = (product) => {
     setProductForm(product);
     setProductEditMode(true);
     setEditProductId(product.id);
   };
 
+  // Delete a user by ID
   const handleUserDelete = async (id) => {
     try {
       await axios.delete(`/api/users/${id}`);
       fetchData();
     } catch (error) {
-      console.error("Error deleting user:", error);
       setError("Error deleting user. Please try again.");
     }
   };
 
+  // Delete a product by ID
   const handleProductDelete = async (id) => {
     try {
       await axios.delete(`/api/products/${id}`);
       fetchData();
     } catch (error) {
-      console.error("Error deleting product:", error);
       setError("Error deleting product. Please try again.");
     }
   };
 
-  // If forbidden, provide feedback instead of redirecting immediately
+  // If the user is forbidden, show an error message
   if (isForbidden) {
     return <div>Forbidden: You do not have access to this page.</div>;
   }
@@ -169,6 +162,7 @@ const Admin = () => {
     <div>
       <h1>Admin Dashboard</h1>
 
+      {/* Manage Users */}
       <div>
         <h2>Manage Users</h2>
         <form onSubmit={handleUserSubmit}>
@@ -188,13 +182,37 @@ const Admin = () => {
             onChange={handleUserInputChange}
             required
           />
-          <button type="submit">{userEditMode ? "Update" : "Create"}</button>
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={userForm.address}
+            onChange={handleUserInputChange}
+            required
+          />
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone"
+            value={userForm.phone}
+            onChange={handleUserInputChange}
+            required
+          />
+          <input
+            type="text"
+            name="billingInfo"
+            placeholder="Billing Information"
+            value={userForm.billingInfo}
+            onChange={handleUserInputChange}
+            required
+          />
+          <button type="submit">{userEditMode ? "Update User" : "Create User"}</button>
         </form>
         <ul>
-          {Array.isArray(users) && users.length > 0 ? (
+          {users.length > 0 ? (
             users.map((user) => (
               <li key={user.id}>
-                {user.email}
+                {user.email}, {user.address}, {user.phone}, {user.billingInfo}
                 <button onClick={() => handleUserEdit(user)}>Edit</button>
                 <button onClick={() => handleUserDelete(user.id)}>Delete</button>
               </li>
@@ -205,6 +223,7 @@ const Admin = () => {
         </ul>
       </div>
 
+      {/* Manage Products */}
       <div>
         <h2>Manage Products</h2>
         <form onSubmit={handleProductSubmit}>
@@ -232,13 +251,13 @@ const Admin = () => {
             onChange={handleProductInputChange}
             required
           />
-          <button type="submit">{productEditMode ? "Update" : "Create"}</button>
+          <button type="submit">{productEditMode ? "Update Product" : "Create Product"}</button>
         </form>
         <ul>
-          {Array.isArray(products) && products.length > 0 ? (
+          {products.length > 0 ? (
             products.map((product) => (
               <li key={product.id}>
-                {product.name} - {product.description} - ${product.price}
+                {product.name} - {product.description} - ${product.price.toFixed(2)}
                 <button onClick={() => handleProductEdit(product)}>Edit</button>
                 <button onClick={() => handleProductDelete(product.id)}>Delete</button>
               </li>
